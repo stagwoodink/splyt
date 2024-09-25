@@ -1,6 +1,6 @@
 # Splyt v0.1
 
-Splyt is a command-line tool that allows you to split images into grid sections effortlessly. Whether you need to divide an image for social media posts, web design, or any other purpose, Splyt provides a simple and flexible solution.
+Splyt is a command-line tool that allows you to effortlessly split images into even grid sections. Whether you need to divide an image for social media posts, web design, or any other purpose, Splyt provides a simple and flexible solution.
 
 ## Features
 
