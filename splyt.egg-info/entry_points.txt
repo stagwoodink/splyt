@@ -1,0 +1,2 @@
+[console_scripts]
+splyt = splyt.cli:main

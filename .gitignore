@@ -1,0 +1,19 @@
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore virtual environments
+venv/
+.env/
+
+# Ignore test coverage files
+.coverage
+*.coveragerc
+
+# Ignore temporary files and IDE configs
+*.swp
+*.swo
+.idea/
+.vscode/
+.DS_Store
