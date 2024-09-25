@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='splyt',
-    version='0.1.0',
+    version='1.1.0',
     author='Xandr Stagwood',
     author_email='stagwoodink@gmail.com',
     description='A command-line tool to split images into grid sections.',

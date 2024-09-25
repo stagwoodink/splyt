@@ -1,4 +1,4 @@
-# Splyt v0.1
+# Splyt v1.1
 
 Splyt is a command-line tool that allows you to effortlessly split images into even grid sections. Whether you need to divide an image for social media posts, web design, or any other purpose, Splyt provides a simple and flexible solution.
 
@@ -12,6 +12,20 @@ Splyt is a command-line tool that allows you to effortlessly split images into e
 - **Intelligent Metadata Storage**: Automatically determines the appropriate way to store metadata based on the image format.
 - **Prevents Overwriting**: Checks for existing files and directories to prevent accidental overwriting by adding iteration numbers when necessary.
 - **Cross-Platform Support**: Works on Linux, macOS, and Windows systems.
+
+## Example
+
+Splyt can take any image, we will use the following as our example:
+
+![Example Image](tests/test_images/image_9.png)
+
+And split it any which way. Let’s do 9 for this example. 
+```bash
+$ splyt tests/test_images/image_9.png 9
+```
+The output will be 9 files like this:
+
+![a1](tests/test_images/image_9_split_example/image_9_a1.png) ![b1](tests/test_images/image_9_split_example/image_9_b1.png) ![c1](tests/test_images/image_9_split_example/image_9_c1.png) ![a2](tests/test_images/image_9_split_example/image_9_a2.png) ![b2](tests/test_images/image_9_split_example/image_9_b2.png) ![c2](tests/test_images/image_9_split_example/image_9_c2.png) ![a3](tests/test_images/image_9_split_example/image_9_a3.png) ![b3](tests/test_images/image_9_split_example/image_9_b3.png) ![c3](tests/test_images/image_9_split_example/image_9_c3.png)
 
 ## Table of Contents
 
@@ -140,19 +154,21 @@ splyt image.png output_dir 12 -C
 Contributions are welcome! If you'd like to contribute to Splyt, please follow these guidelines.
 
 ### Project Structure
-
-```
-splyt/
+```bash
+splyt/ 
 ├── splyt/
-│   ├── __init__.py
-│   ├── core.py
-│   ├── metadata.py
-│   └── utils.py
-├── setup.py
-├── README.md
-├── LICENSE
+│ ├── __init__.py
+│ ├── cli.py
+│ ├── config.py 
+│ ├── core.py 
+│ ├── metadata.py 
+│ └── utils.py 
 └── tests/
-    └── test_splyt.py
+│ ├── test_images/*
+│ └── test_splyt.py
+├── README.md
+├── LICENSE 
+└── setup.py 
 ```
 
 - **`splyt/` (inner directory)**: Contains the Python package modules.
@@ -183,7 +199,7 @@ splyt/
 
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows use 'venv\Scripts\activate'
+   source venv/bin/activate  # On Windows use 'venvScriptsactivate'
    ```
 
 4. **Install Dependencies**

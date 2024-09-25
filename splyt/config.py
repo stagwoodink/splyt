@@ -1,7 +1,7 @@
 # config.py
 
 # Version number
-VERSION = "1.0"
+VERSION = "1.1"
 
 # Supported grid sizes
 VALID_GRID_SIZES = {2, 3, 4, 6, 8, 9, 12}
