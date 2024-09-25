@@ -1,6 +1,7 @@
 # splyt/core.py
 
 import os
+import sys  # Make sure to import sys
 from PIL import Image, UnidentifiedImageError
 from .utils import (
     is_image_file,
@@ -39,7 +40,9 @@ def splyt(image_path, save_dir=None, grid_size=3, copy_metadata=True, add_metada
 
     # Handle save directory
     if save_dir is None:
-        base_save_dir = f"{filename[:9]}{SPLIT_DIR_SUFFIX}"
+        # If save_dir is not provided, create a folder in the same directory as the input image
+        base_image_dir = os.path.dirname(image_path)
+        base_save_dir = os.path.join(base_image_dir, f"{filename[:9]}{SPLIT_DIR_SUFFIX}")
     else:
         base_save_dir = os.path.join(save_dir, f"{filename[:9]}{SPLIT_DIR_SUFFIX}")
 
