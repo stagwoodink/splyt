@@ -20,3 +20,4 @@ venv/
 *.egg-info/
 build/
 dist/
+trash/

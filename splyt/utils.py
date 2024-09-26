@@ -1,140 +1,123 @@
-# splyt/utils.py
+# utils.py
 
 import os
-import sys
-import re
 from PIL import Image, UnidentifiedImageError
+from .config import SUPPORTED_FORMATS
 
-# Supported grid sizes
-VALID_GRID_SIZES = {2, 3, 4, 6, 8, 9, 12}
-
-def parse_arguments(args):
+def is_image_file(filepath):
     """
-    Parse command line arguments to find the image path (or directory), save directory, grid size, and flags.
-    Grid size can be placed anywhere in the command.
-    """
-    image_path = None
-    save_dir = None
-    grid_size = 3  # default grid size
-    copy_metadata = True
-    add_metadata = True
-
-    # Flags
-    flag_c = False
-    flag_C = False
-
-    for arg in args:
-        if arg == '-c':
-            flag_c = True
-        elif arg == '-C':
-            flag_C = True
-        elif arg.isdigit() and int(arg) in VALID_GRID_SIZES:
-            grid_size = int(arg)
-        elif os.path.exists(arg):
-            if image_path is None:
-                image_path = arg
-            else:
-                save_dir = arg
-        else:
-            save_dir = arg
-
-    if not image_path:
-        print("Error: Image file or directory must be specified.")
-        sys.exit(1)
-
-    # Set metadata flags
-    if flag_C:
-        copy_metadata = False
-        add_metadata = False
-    elif flag_c:
-        copy_metadata = False
-        add_metadata = True
-
-    return image_path, save_dir, grid_size, copy_metadata, add_metadata
-
-def is_image_file(file_path):
-    """
-    Check if the file at file_path is an image.
+    Check if the given file path points to a valid image of a supported format.
     """
     try:
-        with Image.open(file_path) as img:
-            img.verify()  # Verify that it is, in fact, an image
-        return True
-    except (UnidentifiedImageError, IOError):
+        with Image.open(filepath) as img:
+            return img.format.upper() in SUPPORTED_FORMATS
+    except (FileNotFoundError, UnidentifiedImageError):
         return False
-
-def col_index_to_letter(col_index):
-    """
-    Convert column index to a lowercase letter starting from 'a'.
-    """
-    return chr(ord('a') + col_index)
-
-def print_progress(iteration, total, file_name='', final_message=False):
-    """
-    Print the progress in the format '#/# filename.ext', updating the same line.
-    If final_message is True, display the completion message.
-    """
-    GREEN = '\033[32m'  # ANSI code for green
-    RESET = '\033[0m'   # ANSI code to reset color
-    if final_message:
-        message = f"{GREEN}{total}/{total}{RESET} {file_name}"
-        sys.stdout.write(f"\r{message}\n")
-    else:
-        sys.stdout.write(f"\r{GREEN}{iteration}/{total}{RESET} {file_name}")
-    sys.stdout.flush()
-
-def get_lowest_available_iteration(base_filenames, save_dir):
-    """
-    For all base filenames, find the lowest available iteration number not in use.
-    Returns the lowest non-negative integer not used for any of the base filenames.
-    """
-    used_iterations = set()
-
-    # Build a regex pattern to match filenames with optional iteration numbers
-    pattern = re.compile(
-        rf"({'|'.join(re.escape(bf) for bf in base_filenames)})(?:\((\d+)\))?\.\w+$"
-    )
-
-    for file in os.listdir(save_dir):
-        match = pattern.match(file)
-        if match:
-            iteration = int(match.group(2)) if match.group(2) else 0
-            used_iterations.add(iteration)
-
-    # Find the lowest non-negative integer not in used_iterations
-    iteration_num = 0
-    while iteration_num in used_iterations:
-        iteration_num += 1
-
-    return iteration_num
 
 def get_lowest_available_directory(base_dir):
     """
-    Find the lowest available iteration number for the base directory.
-    Returns the directory name with the iteration number appended if necessary.
+    Determine the lowest available directory to avoid overwriting directories.
     """
-    if not os.path.exists(base_dir):
-        return base_dir
     iteration = 1
-    while True:
-        new_dir = f"{base_dir}({iteration})"
-        if not os.path.exists(new_dir):
-            return new_dir
+    new_dir = f"{base_dir}/{iteration}"
+    while os.path.exists(new_dir):
         iteration += 1
+        new_dir = f"{base_dir}/{iteration}"
+    return new_dir
 
-def get_grid_dimensions(grid_size, width, height):
+def create_save_directory_if_needed(save_dir):
     """
-    Determine the number of rows and columns for grid sizes that require a grid layout.
+    Ensure the save directory exists.
     """
-    is_long = width >= height
-    if grid_size == 4:
-        return 2, 2
-    elif grid_size == 6:
-        return (3, 2) if is_long else (2, 3)
-    elif grid_size == 8:
-        return (4, 2) if is_long else (2, 4)
-    elif grid_size == 9:
-        return 3, 3
-    elif grid_size == 12:
-        return (4, 3) if is_long else (3, 4)
-    return 1, 1  # Should not happen for valid grid sizes
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    return save_dir
+
+def col_to_letter(col):
+    """
+    Convert a column number to a letter representation (a-z, aa, ab, etc.).
+    """
+    result = []
+    col += 1  # Adjusting to 1-based indexing
+    while col > 0:
+        col, remainder = divmod(col - 1, 26)
+        result.append(chr(65 + remainder))  # Using uppercase letters
+    return ''.join(reversed(result)).lower()
+
+def calculate_cell_positions(image_size, grid_size, aspect_ratio=None):
+    """
+    Calculate cell positions based on image size, grid size, and aspect ratio.
+    Returns a list of cells, each cell is a dict with keys:
+    - 'col': column index
+    - 'row': row index
+    - 'left': left pixel coordinate
+    - 'upper': upper pixel coordinate
+    - 'right': right pixel coordinate
+    - 'lower': lower pixel coordinate
+    """
+    width, height = image_size
+    num_cols, num_rows = grid_size
+
+    cells = []
+
+    if aspect_ratio is None:
+        # Evenly split the image
+        col_width = width / num_cols
+        row_height = height / num_rows
+        for col in range(num_cols):
+            for row in range(num_rows):
+                left = int(col * col_width)
+                upper = int(row * row_height)
+                right = int((col + 1) * col_width) if col < num_cols - 1 else width
+                lower = int((row + 1) * row_height) if row < num_rows - 1 else height
+                cells.append({
+                    'col': col,
+                    'row': row,
+                    'left': left,
+                    'upper': upper,
+                    'right': right,
+                    'lower': lower
+                })
+    else:
+        aspect_x, aspect_y = aspect_ratio
+
+        # Compute scaling factor
+        scale_x = width / (aspect_x * num_cols)
+        scale_y = height / (aspect_y * num_rows)
+        scaling_factor = min(scale_x, scale_y)
+
+        cell_width = aspect_x * scaling_factor
+        cell_height = aspect_y * scaling_factor
+
+        total_width = cell_width * num_cols
+        total_height = cell_height * num_rows
+
+        # Adjust for any remaining pixels to cover the entire image
+        extra_width = width - total_width
+        extra_height = height - total_height
+
+        cols = num_cols + (1 if extra_width > 0 else 0)
+        rows = num_rows + (1 if extra_height > 0 else 0)
+
+        for col in range(cols):
+            for row in range(rows):
+                left = int(col * cell_width)
+                upper = int(row * cell_height)
+                right = int((col + 1) * cell_width)
+                lower = int((row + 1) * cell_height)
+
+                if col == cols - 1:
+                    right = width
+                if row == rows - 1:
+                    lower = height
+
+                cells.append({
+                    'col': col,
+                    'row': row,
+                    'left': left,
+                    'upper': upper,
+                    'right': right,
+                    'lower': lower
+                })
+
+    return cells
