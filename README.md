@@ -30,9 +30,7 @@ $ splyt image_9.png 3 3 1:1
 
 The output will be 9 files like this:
 
-![a1](tests/test_images/image_9_split_example/image_9_a1.png) ![b1](tests/test_images/image_9_split_example/image_9_b1.png) ![c1](tests/test_images/image_9_split_example/image_9_c1.png)  
-![a2](tests/test_images/image_9_split_example/image_9_a2.png) ![b2](tests/test_images/image_9_split_example/image_9_b2.png) ![c2](tests/test_images/image_9_split_example/image_9_c2.png)  
-![a3](tests/test_images/image_9_split_example/image_9_a3.png) ![b3](tests/test_images/image_9_split_example/image_9_b3.png) ![c3](tests/test_images/image_9_split_example/image_9_c3.png)
+![a1](tests/test_images/image_9_split_example/image_9_a1.png) ![b1](tests/test_images/image_9_split_example/image_9_b1.png) ![c1](tests/test_images/image_9_split_example/image_9_c1.png) ![a2](tests/test_images/image_9_split_example/image_9_a2.png) ![b2](tests/test_images/image_9_split_example/image_9_b2.png) ![c2](tests/test_images/image_9_split_example/image_9_c2.png) ![a3](tests/test_images/image_9_split_example/image_9_a3.png) ![b3](tests/test_images/image_9_split_example/image_9_b3.png) ![c3](tests/test_images/image_9_split_example/image_9_c3.png)
 
 Each cell is a square due to the 1:1 aspect ratio, and the entire image is covered, with any extra pixels included in edge images if necessary.
 
