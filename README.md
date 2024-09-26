@@ -150,7 +150,7 @@ splyt image.jpg 4 2 16:9 output_dir
 #### Provide Arguments in Any Order
 
 ```bash
-splyt 16:9 output_dir image.jpg 4 2
+splyt output_dir 4 2 image.jpg 16:9
 ```
 
 - Splyt intelligently parses the inputs:
@@ -158,6 +158,17 @@ splyt 16:9 output_dir image.jpg 4 2
   - Aspect Ratio: 16:9.
   - Target Image: `image.jpg`.
   - Save Directory: `output_dir/`.
+- Logic
+  - The first path given is always the target image.
+  - The second path given (optional) is always the destination.
+  - The first integer (optional) is always grid columns.
+  - The second integer (optional) is always grid rows.
+  - The third integer (optional) is always aspect ratio y.
+  - The fourth integer (optional) is always aspect ratio x.
+  - Exceptions
+    - It's smart enough to recognize groupings.
+    - Giving `3 16:9` will result in 3 columns 1 row and an aspect ratio of 16:9.
+    - But giving `3 16 9` will result in 3 columns 16 rows and a 9:auto aspect ratio.
 
 #### Process All Images in a Directory with Custom Aspect Ratio
 
